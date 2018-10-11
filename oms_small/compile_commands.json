@@ -31,7 +31,7 @@
             "bin/autonomous.cpp.o",
             "src\\autonomous.cpp"
         ],
-        "directory": "D:\\Coding\\vex\\oms_pro",
+        "directory": "D:\\Coding\\vex\\oms_small",
         "file": "src\\autonomous.cpp"
     },
     {
@@ -66,7 +66,7 @@
             "bin/initialize.cpp.o",
             "src\\initialize.cpp"
         ],
-        "directory": "D:\\Coding\\vex\\oms_pro",
+        "directory": "D:\\Coding\\vex\\oms_small",
         "file": "src\\initialize.cpp"
     },
     {
@@ -101,7 +101,7 @@
             "bin/opcontrol.cpp.o",
             "src\\opcontrol.cpp"
         ],
-        "directory": "D:\\Coding\\vex\\oms_pro",
+        "directory": "D:\\Coding\\vex\\oms_small",
         "file": "src\\opcontrol.cpp"
     }
 ]
