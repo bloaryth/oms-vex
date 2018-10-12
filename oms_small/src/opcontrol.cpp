@@ -38,8 +38,8 @@ void opcontrol() {
 	 /**
 	 * Motor power Configuration: Power that claws, throws or else uses.
 	 **/
-	 const std::int32_t claw_power_set = 100;
-	 const std::int32_t throw_power_set = 100;
+	 const std::int32_t claw_power_set = 200;
+	 const std::int32_t throw_power_set = 127;
 
 	 /**
 	 * Record file Configuration: Path that the record file saves.
@@ -127,8 +127,8 @@ void opcontrol() {
 		} else {
 			throw_power = 0;
 		}
-		left_throw_motor.move_velocity(throw_power);
-		right_throw_motor.move_velocity(throw_power);
+		left_throw_motor.move(throw_power);
+		right_throw_motor.move(throw_power);
 
 		// Record
 		if (isRecording) {
