@@ -74,10 +74,15 @@ void opcontrol() {
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
 	while (true) {
 		// Start or end recording.
-		if (master.get_digital(DIGITAL_A)) {
+		if (master.get_digital(DIGITAL_X)) {
 			isRecording = ! isRecording;
+			if (isRecording) {
+				master.print(0, 0, "Record start.\n");
+			} else {
+				master.print(0, 0, "Record end.\n");
+			}
 			pros::delay(1000);
-			if (master.get_digital(DIGITAL_B)) {
+			if (master.get_digital(DIGITAL_Y)) {
 				std::fstream record_fstream (record_path, std::ios_base::out);
 				for (auto& robot_motors : robot_motors_vector) {
 					record_fstream << std::move(std::get<0>(robot_motors)) << '\t';
