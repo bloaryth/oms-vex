@@ -77,12 +77,9 @@ void opcontrol() {
 		if (master.get_digital(DIGITAL_X)) {
 			isRecording = ! isRecording;
 			if (isRecording) {
-				master.print(0, 0, "Record start.\n");
+				pros::lcd::set_text(3, "Record start...\n");
+				master.set_text(0, 0, "Record start...\n");
 			} else {
-				master.print(0, 0, "Record end.\n");
-			}
-			pros::delay(1000);
-			if (master.get_digital(DIGITAL_Y)) {
 				std::fstream record_fstream (record_path, std::ios_base::out);
 				for (auto& robot_motors : robot_motors_vector) {
 					record_fstream << std::move(std::get<0>(robot_motors)) << '\t';
@@ -93,6 +90,7 @@ void opcontrol() {
 				record_fstream.close();
 				break;
 			}
+			pros::delay(1000);
 		}
 
 		// Arcade Control
@@ -144,6 +142,8 @@ void opcontrol() {
 	}
 
 	// In case of record stop
+	pros::lcd::set_text(3, "Record end...\n");
+	master.print(0, 0, "Record end...\n");
 	while (true) {
 		pros::delay(1000);
 	}
