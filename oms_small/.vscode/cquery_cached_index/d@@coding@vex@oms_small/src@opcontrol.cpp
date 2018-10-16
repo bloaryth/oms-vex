@@ -19,6 +19,21 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+  /**
+  * The motors to be used in the opcontrol and autonomous.
+  **/
+  pros::Motor left_front_wheel_motor (LEFT_FRONT_WHEEL_MOTOR);
+  pros::Motor left_front_wheel_motor_rev (LEFT_FRONT_WHEEL_MOTOR_REV, true);
+  pros::Motor right_front_wheel_motor (RIGHT_FRONT_WHEEL_MOTOR, true);
+  pros::Motor right_front_wheel_motor_rev (RIGHT_FRONT_WHEEL_MOTOR_REV);
+  pros::Motor left_back_wheel_motor (LEFT_BACK_WHEEL_MOTOR);
+  pros::Motor left_back_wheel_motor_rev (LEFT_BACK_WHEEL_MOTOR_REV, true);
+  pros::Motor right_back_wheel_motor (RIGHT_BACK_WHEEL_MOTOR, true);
+  pros::Motor right_back_wheel_motor_rev (RIGHT_BACK_WHEEL_MOTOR_REV);
+  pros::Motor left_throw_motor (LEFT_THROW_MOTOR);
+  pros::Motor right_throw_motor (RIGHT_THROW_MOTOR, true);
+  pros::Motor claw_motor (CLAW_MOTOR);
+
 	/**
 	* Prepare for the autonomous program.
 	**/
@@ -39,7 +54,12 @@ void opcontrol() {
 				master.set_text(0, 0, "Record start...\n");
 			} else {
 				std::fstream record_fstream (record_path, std::ios_base::out);
+        int hh = 0;
 				for (auto& robot_motors : robot_motors_vector) {
+          if (!hh) {
+            hh += 1;
+            pros::lcd::set_text(4, std::to_string(std::get<0>(robot_motors)));
+          }
 					record_fstream << std::move(std::get<0>(robot_motors)) << '\t';
 					record_fstream << std::move(std::get<1>(robot_motors)) << '\t';
 					record_fstream << std::move(std::get<2>(robot_motors)) << '\t';
