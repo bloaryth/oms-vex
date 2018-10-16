@@ -56,10 +56,6 @@ void opcontrol() {
 				std::fstream record_fstream (record_path, std::ios_base::out);
         int hh = 0;
 				for (auto& robot_motors : robot_motors_vector) {
-          if (!hh) {
-            hh += 1;
-            pros::lcd::set_text(4, std::to_string(std::get<0>(robot_motors)));
-          }
 					record_fstream << std::move(std::get<0>(robot_motors)) << '\t';
 					record_fstream << std::move(std::get<1>(robot_motors)) << '\t';
 					record_fstream << std::move(std::get<2>(robot_motors)) << '\t';
