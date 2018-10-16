@@ -1,4 +1,5 @@
 #include "config.h"
+#include <iostream>
 #include <vector>
 #include <tuple>
 #include <string>
@@ -109,6 +110,7 @@ void opcontrol() {
 
 		// Record
 		if (isRecording) {
+      std::cout << left_wheel_power << ' ' << right_wheel_power << ' ' << claw_power << ' ' << throw_power << '\n';
 			robot_motors_vector.emplace_back(std::make_tuple(left_wheel_power, right_wheel_power, claw_power, throw_power));
 		}
 

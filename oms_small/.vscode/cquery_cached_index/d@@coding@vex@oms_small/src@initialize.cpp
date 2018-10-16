@@ -38,7 +38,9 @@ void initialize() {
 	// // printf("%s\n", buf); // print the string read from the file
 	// pros::lcd::set_text(4, buf);
 	// // Should print "Example text" to the terminal
-	// fclose(usd_file_read); // always close files when you're done with them
+	// fclose(usd_file_read); // always close files when you're done with them\
+
+	autonomous();
 
 
 }
