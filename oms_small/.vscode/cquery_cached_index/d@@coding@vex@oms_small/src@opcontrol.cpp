@@ -35,6 +35,11 @@ void opcontrol() {
   pros::Motor right_throw_motor (RIGHT_THROW_MOTOR, true);
   pros::Motor claw_motor (CLAW_MOTOR);
 
+  /**
+  * Record file Configuration: Path that the record file saves.
+  **/
+  const char* record_path = "/usd/oms_small_auto.txt";
+
 	/**
 	* Prepare for the autonomous program.
 	**/
@@ -54,15 +59,12 @@ void opcontrol() {
 				pros::lcd::set_text(3, "Record start...\n");
 				master.set_text(0, 0, "Record start...\n");
 			} else {
-				std::fstream record_fstream (record_path, std::ios_base::out);
-        int hh = 0;
+        FILE* record = fopen (record_path, "w");
 				for (auto& robot_motors : robot_motors_vector) {
-					record_fstream << std::move(std::get<0>(robot_motors)) << '\t';
-					record_fstream << std::move(std::get<1>(robot_motors)) << '\t';
-					record_fstream << std::move(std::get<2>(robot_motors)) << '\t';
-					record_fstream << std::move(std::get<3>(robot_motors)) << '\n';
+          fprintf(record, "%d\t%d\t%d\t%d\n", std::move(std::get<0>(robot_motors)), std::move(std::get<1>(robot_motors)),
+                  std::move(std::get<2>(robot_motors)), std::move(std::get<3>(robot_motors)));
 				}
-				record_fstream.close();
+        fclose(record);
 				break;
 			}
 			pros::delay(1000);

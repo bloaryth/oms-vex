@@ -1,35 +1,30 @@
 #include "main.h"
 
-/**
-* Configurations that autonomous.cpp and opcontrol use.
-**/
+  /**
+  * Configurations that autonomous.cpp and opcontrol use.
+  **/
 
-/**
-* Port Configuration: Ports that all the motors, sensors or else use.
-* You can modify it to fit your Robot.
-**/
- const std::int32_t LEFT_FRONT_WHEEL_MOTOR = 1;
- const std::int32_t LEFT_FRONT_WHEEL_MOTOR_REV = 2;
- const std::int32_t RIGHT_FRONT_WHEEL_MOTOR = 3;
- const std::int32_t RIGHT_FRONT_WHEEL_MOTOR_REV = 4;
- const std::int32_t LEFT_BACK_WHEEL_MOTOR = 5;
- const std::int32_t LEFT_BACK_WHEEL_MOTOR_REV = 6;
- const std::int32_t RIGHT_BACK_WHEEL_MOTOR = 7;
- const std::int32_t RIGHT_BACK_WHEEL_MOTOR_REV = 8;
- const std::int32_t LEFT_THROW_MOTOR = 9;
- const std::int32_t RIGHT_THROW_MOTOR = 10;
- const std::int32_t CLAW_MOTOR = 11;
+  /**
+  * Port Configuration: Ports that all the motors, sensors or else use.
+  * You can modify it to fit your Robot.
+  **/
+  const std::int32_t LEFT_FRONT_WHEEL_MOTOR = 1;
+  const std::int32_t LEFT_FRONT_WHEEL_MOTOR_REV = 2;
+  const std::int32_t RIGHT_FRONT_WHEEL_MOTOR = 3;
+  const std::int32_t RIGHT_FRONT_WHEEL_MOTOR_REV = 4;
+  const std::int32_t LEFT_BACK_WHEEL_MOTOR = 5;
+  const std::int32_t LEFT_BACK_WHEEL_MOTOR_REV = 6;
+  const std::int32_t RIGHT_BACK_WHEEL_MOTOR = 7;
+  const std::int32_t RIGHT_BACK_WHEEL_MOTOR_REV = 8;
+  const std::int32_t LEFT_THROW_MOTOR = 9;
+  const std::int32_t RIGHT_THROW_MOTOR = 10;
+  const std::int32_t CLAW_MOTOR = 11;
 
- /**
- * Motor power Configuration: Power that claws, throws or else uses.
- **/
- const std::int32_t claw_power_set = 200;
- const std::int32_t throw_power_set = 127;
-
- /**
- * Record file Configuration: Path that the record file saves.
- **/
- const std::string record_path = "/usd/oms_small_auto.txt";
+  /**
+  * Motor power Configuration: Power that claws, throws or else uses.
+  **/
+  const std::int32_t claw_power_set = 200;
+  const std::int32_t throw_power_set = 127;
 
   /**
   * The delay of each control step.

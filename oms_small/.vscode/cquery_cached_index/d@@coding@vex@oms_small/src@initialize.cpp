@@ -1,5 +1,6 @@
 #include "main.h"
 #include <fstream>
+#include <stdio.h>
 
 void on_center_button() {
 	static bool pressed = false;
@@ -22,27 +23,7 @@ void initialize() {
 	pros::lcd::set_text(1, "Hello OMS!");
 
 	pros::lcd::register_btn1_cb(on_center_button);
-
-	// std::fstream record ("/usd/example .txt", std::ios_base::out);
-
-	// FILE* usd_file_write = fopen("/usd/example.txt", "w");
-	// fputs("Example text", usd_file_write);
-	// fclose(usd_file_write);
-	//
-	// FILE* usd_file_read = fopen("/usd/example.txt", "r");
-	// char buf[50]; // This just needs to be larger than the contents of the file
-	// for (int i = 0; i < 50; ++i) {
-	// 	buf[i] = '\0';
-	// }
-	// fread(buf, 1, 50, usd_file_read); // passing 1 because a `char` is 1 byte, and 50 b/c it's the length of buf
-	// // printf("%s\n", buf); // print the string read from the file
-	// pros::lcd::set_text(4, buf);
-	// // Should print "Example text" to the terminal
-	// fclose(usd_file_read); // always close files when you're done with them\
-
-	autonomous();
-
-
+	
 }
 
 /**

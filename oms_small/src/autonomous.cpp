@@ -1,6 +1,5 @@
 #include "config.h"
-#include <fstream>
-#include <string>
+#include <stdio.h>
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -29,12 +28,17 @@ void autonomous() {
   pros::Motor right_throw_motor (RIGHT_THROW_MOTOR, true);
   pros::Motor claw_motor (CLAW_MOTOR);
 
-  std::fstream record_stream (record_path, std::ios_base::in);
+  /**
+  * Record file Configuration: Path that the record file saves.
+  **/
+  const char* record_path = "/usd/oms_small_auto.txt";
+
+  FILE* record = fopen (record_path, "r");
 
   while (true) {
     // Arcade control
-    std::int32_t left_wheel_power, right_wheel_power;
-    record_stream >> left_wheel_power >> right_wheel_power;
+    std::int32_t left_wheel_power = 0, right_wheel_power = 0;
+    fscanf(record, " %d %d ", &left_wheel_power, &right_wheel_power);
 
     left_front_wheel_motor.move(left_wheel_power);
     left_front_wheel_motor_rev.move(left_wheel_power);
@@ -47,15 +51,17 @@ void autonomous() {
   	right_back_wheel_motor_rev.move(right_wheel_power);
 
     // Claw Control
-    std::int32_t claw_power;
-    record_stream >> claw_power;
+    std::int32_t claw_power = 0;
+    fscanf(record, " %d ", &claw_power);
     claw_motor.move_velocity(claw_power);
 
     // Throw Control
-    std::int32_t throw_power;
-    record_stream >> throw_power;
+    std::int32_t throw_power = 0;
+    fscanf(record, " %d ", &throw_power);
     left_throw_motor.move(throw_power);
     right_throw_motor.move(throw_power);
+
+    printf("%d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power);
 
     // Delay
     pros::delay(delay_time);
