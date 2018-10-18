@@ -24,7 +24,8 @@
   * Motor power Configuration: Power that claws, throws or else uses.
   **/
   const std::int32_t claw_power_set = 200;
-  const std::int32_t throw_power_set = 127;
+  // const std::int32_t throw_power_set = 127;
+  const std::int32_t throw_power_set = 63;
 
   /**
   * The delay of each control step.
