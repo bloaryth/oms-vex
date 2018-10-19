@@ -22,14 +22,20 @@
 
 inline std::int32_t analog_to_g18_velocity(std::int32_t analog) {
   return analog / 127.0 * 200;
-  // int raw_analog = analog / 127.0 * 200;
-  // if (raw_analog > 200) {
-  //   return 200;
-  // } else if (raw_analog < -200) {
-  //   return -200;
-  // } else {
-  //   return raw_analog;
-  // }
+}
+
+/**
+* Slow start but quick end.
+**/
+inline std::int32_t smooth_power (std::int32_t old_velocity, std::int32_t new_velocity) {
+  std::int32_t inc = std::min(abs(old_velocity / 10), 3) + 1;
+  if (new_velocity - old_velocity > inc) {
+    return old_velocity + inc;
+  } else if (new_velocity - old_velocity < - inc) {
+    return old_velocity - inc;
+  } else {
+    return new_velocity;
+  }
 }
 
 void opcontrol() {
@@ -65,6 +71,7 @@ void opcontrol() {
 	* Runing step of Robot.
 	**/
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
+  std::int32_t old_straight_power = 0;
 	while (true) {
 		// Start or end recording.
 		if (master.get_digital(DIGITAL_X)) {
@@ -85,9 +92,7 @@ void opcontrol() {
 		}
 
 		// Arcade Control
-		std::int32_t straight_power;
-    std::int32_t turn_power;
-
+    std::int32_t straight_power;
     if (master.get_digital(DIGITAL_UP)) {
       straight_power = move_power_set;
     } else if (master.get_digital(DIGITAL_DOWN)) {
@@ -95,17 +100,21 @@ void opcontrol() {
     } else {
       straight_power = master.get_analog(ANALOG_LEFT_Y);
     }
+    straight_power = smooth_power(old_straight_power, straight_power);
+    old_straight_power = straight_power;
 
-    if (master.get_digital(DIGITAL_RIGHT)) {
-      turn_power = move_power_set;
-    } else if (master.get_digital(DIGITAL_LEFT)) {
-      turn_power = - move_power_set;
-    } else {
-      turn_power = master.get_analog(ANALOG_RIGHT_X);
-    }
+    std::int32_t turn_power;
+    turn_power = master.get_analog(ANALOG_RIGHT_X) / 2;
+    // if (master.get_digital(DIGITAL_RIGHT)) {
+    //   turn_power = move_power_set;
+    // } else if (master.get_digital(DIGITAL_LEFT)) {
+    //   turn_power = - move_power_set;
+    // } else {
+    //   turn_power = master.get_analog(ANALOG_RIGHT_X);
+    // }
 
-		std::int32_t left_wheel_power = analog_to_g18_velocity(straight_power - turn_power);
-		std::int32_t right_wheel_power = analog_to_g18_velocity(straight_power + turn_power);
+    std::int32_t left_wheel_power = analog_to_g18_velocity(straight_power - turn_power);
+    std::int32_t right_wheel_power = analog_to_g18_velocity(straight_power + turn_power);
 
 		left_front_wheel_motor.move_velocity(left_wheel_power);
 		left_front_wheel_motor_rev.move_velocity(left_wheel_power);
@@ -118,7 +127,7 @@ void opcontrol() {
 		right_back_wheel_motor_rev.move_velocity(right_wheel_power);
 
 		// Claw Control
-		std::int32_t claw_power;
+    std::int32_t claw_power;
 		if (master.get_digital(DIGITAL_L1)) {
 			claw_power = claw_power_set;
 		} else if (master.get_digital(DIGITAL_L2)) {
@@ -129,7 +138,7 @@ void opcontrol() {
 		claw_motor.move_velocity(claw_power);
 
 		// Throw Control
-		std::int32_t throw_power;
+    std::int32_t throw_power;
 		if (master.get_digital(DIGITAL_R1)) {
 			throw_power = throw_power_set;
 		} else if (master.get_digital(DIGITAL_R2)) {
