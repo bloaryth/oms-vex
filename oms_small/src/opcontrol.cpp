@@ -19,6 +19,19 @@
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+inline std::int32_t analog_to_g18_velocity(std::int32_t analog) {
+  return analog / 127.0 * 200;
+  // int raw_analog = analog / 127.0 * 200;
+  // if (raw_analog > 200) {
+  //   return 200;
+  // } else if (raw_analog < -200) {
+  //   return -200;
+  // } else {
+  //   return raw_analog;
+  // }
+}
+
 void opcontrol() {
   /**
   * The motors to be used in the opcontrol and autonomous.
@@ -45,6 +58,7 @@ void opcontrol() {
 	**/
 	using robot_motors_tuple = std::tuple<std::int32_t, std::int32_t, std::int32_t, std::int32_t>;
 	std::vector<robot_motors_tuple> robot_motors_vector;
+  robot_motors_vector.reserve(6000);  // 60 s
 	bool isRecording = false;
 
 	/**
@@ -72,7 +86,7 @@ void opcontrol() {
 
 		// Arcade Control
 		std::int32_t straight_power;
-    std::int32_t turn_power = master.get_analog(ANALOG_RIGHT_X);
+    std::int32_t turn_power;
 
     if (master.get_digital(DIGITAL_UP)) {
       straight_power = move_power_set;
@@ -90,19 +104,18 @@ void opcontrol() {
       turn_power = master.get_analog(ANALOG_RIGHT_X);
     }
 
+		std::int32_t left_wheel_power = analog_to_g18_velocity(straight_power - turn_power);
+		std::int32_t right_wheel_power = analog_to_g18_velocity(straight_power + turn_power);
 
-		std::int32_t left_wheel_power = straight_power - turn_power;
-		std::int32_t right_wheel_power = straight_power + turn_power;
+		left_front_wheel_motor.move_velocity(left_wheel_power);
+		left_front_wheel_motor_rev.move_velocity(left_wheel_power);
+		left_back_wheel_motor.move_velocity(left_wheel_power);
+		left_back_wheel_motor_rev.move_velocity(left_wheel_power);
 
-		left_front_wheel_motor.move(left_wheel_power);
-		left_front_wheel_motor_rev.move(left_wheel_power);
-		left_back_wheel_motor.move(left_wheel_power);
-		left_back_wheel_motor_rev.move(left_wheel_power);
-
-		right_front_wheel_motor.move(right_wheel_power);
-		right_front_wheel_motor_rev.move(right_wheel_power);
-		right_back_wheel_motor.move(right_wheel_power);
-		right_back_wheel_motor_rev.move(right_wheel_power);
+		right_front_wheel_motor.move_velocity(right_wheel_power);
+		right_front_wheel_motor_rev.move_velocity(right_wheel_power);
+		right_back_wheel_motor.move_velocity(right_wheel_power);
+		right_back_wheel_motor_rev.move_velocity(right_wheel_power);
 
 		// Claw Control
 		std::int32_t claw_power;
@@ -124,12 +137,12 @@ void opcontrol() {
 		} else {
 			throw_power = 0;
 		}
-		left_throw_motor.move(throw_power);
-		right_throw_motor.move(throw_power);
+		left_throw_motor.move_velocity(throw_power);
+		right_throw_motor.move_velocity(throw_power);
 
 		// Record
 		if (isRecording) {
-      std::cout << left_wheel_power << ' ' << right_wheel_power << ' ' << claw_power << ' ' << throw_power << '\n';
+      printf("%d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power);
 			robot_motors_vector.emplace_back(std::make_tuple(left_wheel_power, right_wheel_power, claw_power, throw_power));
 		}
 

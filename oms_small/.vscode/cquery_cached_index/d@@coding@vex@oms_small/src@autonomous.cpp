@@ -40,15 +40,15 @@ void autonomous() {
     std::int32_t left_wheel_power = 0, right_wheel_power = 0;
     fscanf(record, " %d %d ", &left_wheel_power, &right_wheel_power);
 
-    left_front_wheel_motor.move(left_wheel_power);
-    left_front_wheel_motor_rev.move(left_wheel_power);
-    left_back_wheel_motor.move(left_wheel_power);
-    left_back_wheel_motor_rev.move(left_wheel_power);
+    left_front_wheel_motor.move_velocity(left_wheel_power);
+    left_front_wheel_motor_rev.move_velocity(left_wheel_power);
+    left_back_wheel_motor.move_velocity(left_wheel_power);
+    left_back_wheel_motor_rev.move_velocity(left_wheel_power);
 
-  	right_front_wheel_motor.move(right_wheel_power);
-  	right_front_wheel_motor_rev.move(right_wheel_power);
-  	right_back_wheel_motor.move(right_wheel_power);
-  	right_back_wheel_motor_rev.move(right_wheel_power);
+  	right_front_wheel_motor.move_velocity(right_wheel_power);
+  	right_front_wheel_motor_rev.move_velocity(right_wheel_power);
+  	right_back_wheel_motor.move_velocity(right_wheel_power);
+  	right_back_wheel_motor_rev.move_velocity(right_wheel_power);
 
     // Claw Control
     std::int32_t claw_power = 0;
@@ -58,8 +58,8 @@ void autonomous() {
     // Throw Control
     std::int32_t throw_power = 0;
     fscanf(record, " %d ", &throw_power);
-    left_throw_motor.move(throw_power);
-    right_throw_motor.move(throw_power);
+    left_throw_motor.move_velocity(throw_power);
+    right_throw_motor.move_velocity(throw_power);
 
     printf("%d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power);
 
