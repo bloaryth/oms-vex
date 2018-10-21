@@ -57,7 +57,8 @@ void opcontrol() {
 	* Runing step of Robot.
 	**/
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
-  std::int32_t old_straight_power = 0;
+  std::int32_t direction = 1;
+  std::int32_t change_direction_delay = 0;
 	while (true) {
 		// Start or end recording.
 		if (master.get_digital(DIGITAL_X)) {
@@ -77,6 +78,14 @@ void opcontrol() {
 			pros::delay(1000);
 		}
 
+    // change direction with 100 delay_time cool down.
+    if (!change_direction_delay && master.get_digital(DIGITAL_Y)) {
+      direction *= -1;
+      change_direction_delay = 100;
+    } else if (change_direction_delay > 0) {
+      --change_direction_delay;
+    }
+
 		// Arcade Control
     std::int32_t straight_power;
     if (master.get_digital(DIGITAL_UP)) {
@@ -86,6 +95,7 @@ void opcontrol() {
     } else {
       straight_power = master.get_analog(ANALOG_LEFT_Y);
     }
+    straight_power *= direction;
 
     std::int32_t turn_power;
     turn_power = master.get_analog(ANALOG_RIGHT_X);
