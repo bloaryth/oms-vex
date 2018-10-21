@@ -24,20 +24,6 @@ inline std::int32_t analog_to_g18_velocity(std::int32_t analog) {
   return analog / 127.0 * 200;
 }
 
-/**
-* Slow start but quick end.
-**/
-inline std::int32_t smooth_power (std::int32_t old_velocity, std::int32_t new_velocity) {
-  std::int32_t inc = std::min(abs(old_velocity / 10), 3) + 1;
-  if (new_velocity - old_velocity > inc) {
-    return old_velocity + inc;
-  } else if (new_velocity - old_velocity < - inc) {
-    return old_velocity - inc;
-  } else {
-    return new_velocity;
-  }
-}
-
 void opcontrol() {
   /**
   * The motors to be used in the opcontrol and autonomous.
@@ -100,18 +86,9 @@ void opcontrol() {
     } else {
       straight_power = master.get_analog(ANALOG_LEFT_Y);
     }
-    straight_power = smooth_power(old_straight_power, straight_power);
-    old_straight_power = straight_power;
 
     std::int32_t turn_power;
-    turn_power = master.get_analog(ANALOG_RIGHT_X) / 2;
-    // if (master.get_digital(DIGITAL_RIGHT)) {
-    //   turn_power = move_power_set;
-    // } else if (master.get_digital(DIGITAL_LEFT)) {
-    //   turn_power = - move_power_set;
-    // } else {
-    //   turn_power = master.get_analog(ANALOG_RIGHT_X);
-    // }
+    turn_power = master.get_analog(ANALOG_RIGHT_X);
 
     std::int32_t left_wheel_power = analog_to_g18_velocity(straight_power - turn_power);
     std::int32_t right_wheel_power = analog_to_g18_velocity(straight_power + turn_power);
