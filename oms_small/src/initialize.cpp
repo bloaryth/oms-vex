@@ -1,15 +1,12 @@
- #include "main.h"
-#include <fstream>
-#include <stdio.h>
+ #include "config.h"
 
 void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I'm squeesed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
+  isBlue = !isBlue;
+  if (isBlue) {
+    pros::lcd::set_text(2, "Blue team now.\n");
+  } else {
+    pros::lcd::set_text(2, "Red team now.\n");
+  }
 }
 
 /**
@@ -21,6 +18,11 @@ void on_center_button() {
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello OMS!");
+  if (isBlue) {
+    pros::lcd::set_text(2, "Blue team now.\n");
+  } else {
+    pros::lcd::set_text(2, "Red team now.\n");
+  }
 
 	pros::lcd::register_btn1_cb(on_center_button);
 
