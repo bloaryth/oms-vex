@@ -19,18 +19,20 @@
   const std::int32_t LEFT_THROW_MOTOR = 9;
   const std::int32_t RIGHT_THROW_MOTOR = 10;
   const std::int32_t CLAW_MOTOR = 15;
+  const std::int32_t ARM_MOTOR = 20;
 
   /**
   * Motor power Configuration: Power that claws, throws or else uses.
   **/
   const std::int32_t move_power_set = 63;
-  const std::int32_t claw_power_set = 200;
+  const std::int32_t claw_power_set = 100;
   const std::int32_t throw_power_set = 100;
+  const std::int32_t arm_power_set = 100;
 
   /**
   * The delay of each control step.
   **/
-  const std::int32_t delay_time = 10;
+  const std::int32_t delay_time = 50;
 
   // /**
   // * The motors to be used in the opcontrol and autonomous.

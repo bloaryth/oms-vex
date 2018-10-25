@@ -39,6 +39,7 @@ void opcontrol() {
   pros::Motor left_throw_motor (LEFT_THROW_MOTOR);
   pros::Motor right_throw_motor (RIGHT_THROW_MOTOR, true);
   pros::Motor claw_motor (CLAW_MOTOR);
+  pros::Motor arm_motor (ARM_MOTOR);
 
   /**
   * Record file Configuration: Path that the record file saves.
@@ -48,9 +49,9 @@ void opcontrol() {
 	/**
 	* Prepare for the autonomous program.
 	**/
-	using robot_motors_tuple = std::tuple<std::int32_t, std::int32_t, std::int32_t, std::int32_t>;
+	using robot_motors_tuple = std::tuple<std::int32_t, std::int32_t, std::int32_t, std::int32_t, std::int32_t>;
 	std::vector<robot_motors_tuple> robot_motors_vector;
-  robot_motors_vector.reserve(6000);  // 60 s
+  robot_motors_vector.reserve(1000 / delay_time * 60);  // 60 s
 	bool isRecording = false;
 
 	/**
@@ -73,7 +74,9 @@ void opcontrol() {
                   std::move(std::get<2>(robot_motors)), std::move(std::get<3>(robot_motors)));
 				}
         fclose(record);
-				break;
+        pros::lcd::set_text(3, "Record end...\n");
+        master.print(0, 0, "Record end...\n");
+        robot_motors_vector.clear();
 			}
 			pros::delay(1000);
 		}
@@ -98,7 +101,18 @@ void opcontrol() {
     straight_power *= direction;
 
     std::int32_t turn_power;
-    turn_power = master.get_analog(ANALOG_RIGHT_X);
+    if (master.get_digital(DIGITAL_LEFT)) {
+      turn_power = move_power_set;
+    } else if (master.get_digital(DIGITAL_RIGHT)) {
+      turn_power = - move_power_set;
+    } else {
+      turn_power = master.get_analog(ANALOG_RIGHT_X);
+    }
+
+    if (isRecording) {
+      straight_power /= 2;
+      turn_power /= 4;
+    }
 
     std::int32_t left_wheel_power = analog_to_g18_velocity(straight_power - turn_power);
     std::int32_t right_wheel_power = analog_to_g18_velocity(straight_power + turn_power);
@@ -136,20 +150,24 @@ void opcontrol() {
 		left_throw_motor.move_velocity(throw_power);
 		right_throw_motor.move_velocity(throw_power);
 
+    std::int32_t arm_power;
+    if (master.get_digital(DIGITAL_A)) {
+      arm_power = arm_power_set;
+    } else if (master.get_digital(DIGITAL_B)) {
+      arm_power = - arm_power_set;
+    } else {
+      arm_power = 0;
+    }
+    arm_motor.move_velocity(arm_power);
+
 		// Record
 		if (isRecording) {
-      printf("%d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power);
-			robot_motors_vector.emplace_back(std::make_tuple(left_wheel_power, right_wheel_power, claw_power, throw_power));
+      // printf("%d %d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power, arm_power);
+			robot_motors_vector.emplace_back(std::make_tuple(left_wheel_power, right_wheel_power, claw_power, throw_power, arm_power));
 		}
 
 		// Delay
 		pros::delay(delay_time);
 	}
 
-	// In case of record stop
-	pros::lcd::set_text(3, "Record end...\n");
-	master.print(0, 0, "Record end...\n");
-	while (true) {
-		pros::delay(1000);
-	}
 }

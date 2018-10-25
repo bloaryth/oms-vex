@@ -27,6 +27,7 @@ void autonomous() {
   pros::Motor left_throw_motor (LEFT_THROW_MOTOR);
   pros::Motor right_throw_motor (RIGHT_THROW_MOTOR, true);
   pros::Motor claw_motor (CLAW_MOTOR);
+  pros::Motor arm_motor (ARM_MOTOR);
 
   /**
   * Record file Configuration: Path that the record file saves.
@@ -61,7 +62,12 @@ void autonomous() {
     left_throw_motor.move_velocity(throw_power);
     right_throw_motor.move_velocity(throw_power);
 
-    printf("%d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power);
+    // Arm Control
+    std::int32_t arm_power = 0;
+    fscanf(record, " %d ", &arm_power);
+    arm_motor.move_velocity(arm_power);
+
+    // printf("%d %d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power, arm_power);
 
     // Delay
     pros::delay(delay_time);
