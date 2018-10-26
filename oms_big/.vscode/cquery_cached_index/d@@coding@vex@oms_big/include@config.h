@@ -51,7 +51,7 @@ const char* const record_path = "/usd/oms_big_auto.txt";
 /**
 * The autonomous part this is to operate.
 **/
-extern bool isBlue;
+extern bool is_blue;
 
 /**
 * The motors to be used in the opcontrol and autonomous.

@@ -19,7 +19,7 @@ void autonomous() {
     // Arcade control
     std::int32_t straight_power = 0, turn_power = 0;
     fscanf(record, " %d %d ", &straight_power, &turn_power);
-    if (!isBlue) {
+    if (!is_blue) {
       turn_power = - turn_power;
     }
 

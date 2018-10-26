@@ -3,7 +3,7 @@
 /**
 * The autonomous part this is to operate.
 **/
-bool isBlue = true;
+bool is_blue = true;
 
 /**
 * The motors to be used in the opcontrol and autonomous.

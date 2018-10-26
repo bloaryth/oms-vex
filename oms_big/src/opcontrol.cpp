@@ -28,21 +28,23 @@ void opcontrol() {
 	using robot_motors_tuple = std::tuple<std::int32_t, std::int32_t, std::int32_t, std::int32_t, std::int32_t, std::int32_t>;
 	std::vector<robot_motors_tuple> robot_motors_vector;
   robot_motors_vector.reserve(1000 / delay_time * 60);  // 60 s
-	bool isRecording = false;
+	bool is_recording = false;
 
   /**
   * Runing step of Robot.
   **/
   int arm_target = 0;
-	bool isScroll = false;
+  bool is_slow = false;
+  int change_speed_cooldown = 0;
+  int scroll_direction = 0;
 	int change_scroll_cooldown = 0;
   pros::Controller master (pros::E_CONTROLLER_MASTER);
   pros::lcd::set_text(3, "opcontrol mode.\n");
   while (true) {
     // Start or end recording.
     if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_Y)) {
-      isRecording = ! isRecording;
-      if (isRecording) {
+      is_recording = ! is_recording;
+      if (is_recording) {
         pros::lcd::set_text(3, "Record start...\n");
       } else {
         FILE* record = fopen (record_path, "w");
@@ -56,6 +58,13 @@ void opcontrol() {
         pros::lcd::set_text(3, "Record end...\n");
       }
       pros::delay(1000);
+    }
+
+    // SLow move
+    if (!change_speed_cooldown && master.get_digital(DIGITAL_X)) {
+      is_slow = !is_slow;
+    } else if (change_speed_cooldown > 0) {
+      --change_speed_cooldown;
     }
 
     // Arcade Control
@@ -79,9 +88,14 @@ void opcontrol() {
 		}
 		turn_power = analog_to_g18_velocity(turn_power);
 
-    if (isRecording) {
+    if (is_recording) {
       straight_power /= 2;
       turn_power /= 4;
+    }
+
+    if (is_slow) {
+      straight_power /= 2;
+      turn_power /= 2;
     }
 
     std::int32_t left_wheel_power = straight_power + turn_power;
@@ -96,17 +110,19 @@ void opcontrol() {
 
     // Scroll Control
 		std::int32_t scroll_power;
-		if (!change_scroll_cooldown && master.get_digital(DIGITAL_B)) {
-			isScroll = !isScroll;
-			change_scroll_cooldown = 1000 / delay_time;
-		} else if (change_scroll_cooldown > 0) {
+    if (!change_scroll_cooldown) {
+      if (master.get_digital(DIGITAL_B)) {
+        // (-1 -> 1) (0 ->1) (1 -> 0)
+        scroll_direction = !((scroll_direction + 1) / 2);
+      } else if (master.get_digital(DIGITAL_Y)) {
+        // (-1 -> 0) (0 -> -1) (1 -> -1)
+        scroll_direction = -!((scroll_direction - 1) / 2);
+      }
+      change_scroll_cooldown = 1000 / delay_time;
+    } else if (change_scroll_cooldown > 0) {
 			--change_scroll_cooldown;
 		}
-		if (isScroll) {
-			scroll_power = scroll_power_set;
-		} else {
-			scroll_power = 0;
-		}
+		scroll_power = scroll_power_set * scroll_direction;
 		scroll_motor.move_velocity(scroll_power);
 
     // Eject Control
@@ -154,7 +170,7 @@ void opcontrol() {
     // }
 
     // Record
-    if (isRecording) {
+    if (is_recording) {
       printf("%d %d %d %d %d %d\n", straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power);
       robot_motors_vector.emplace_back(std::make_tuple(straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power));
     }

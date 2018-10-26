@@ -1,8 +1,8 @@
 #include "config.h"
 
 void on_center_button() {
-	isBlue = !isBlue;
-  if (isBlue) {
+	is_blue = !is_blue;
+  if (is_blue) {
     pros::lcd::set_text(2, "Blue team now.\n");
   } else {
     pros::lcd::set_text(2, "Red team now.\n");
@@ -19,7 +19,7 @@ void on_center_button() {
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello OMS-B!");
-  if (isBlue) {
+  if (is_blue) {
     pros::lcd::set_text(2, "Blue team now.\n");
   } else {
     pros::lcd::set_text(2, "Red team now.\n");
