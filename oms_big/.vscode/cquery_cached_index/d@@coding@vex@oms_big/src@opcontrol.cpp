@@ -63,6 +63,7 @@ void opcontrol() {
     // SLow move
     if (!change_speed_cooldown && master.get_digital(DIGITAL_X)) {
       is_slow = !is_slow;
+      change_speed_cooldown = 1000 / delay_time;
     } else if (change_speed_cooldown > 0) {
       --change_speed_cooldown;
     }
