@@ -38,7 +38,7 @@ void opcontrol() {
 	**/
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
   bool is_forward = true;
-  std::int32_t change_direction_delay = 0;
+  std::int32_t change_direction_cooldown = 0;
 	while (true) {
 		// Start or end recording.
 		if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_Y)) {
@@ -59,11 +59,11 @@ void opcontrol() {
 		}
 
     // change direction with 1s delay_time cool down.
-    if (!change_direction_delay && master.get_digital(DIGITAL_Y)) {
+    if (!change_direction_cooldown && master.get_digital(DIGITAL_Y)) {
       is_forward = !is_forward;
-      change_direction_delay = 1000 / delay_time;
-    } else if (change_direction_delay > 0) {
-      --change_direction_delay;
+      change_direction_cooldown = 1000 / delay_time;
+    } else if (change_direction_cooldown > 0) {
+      --change_direction_cooldown;
     }
 
 		// Arcade Control
