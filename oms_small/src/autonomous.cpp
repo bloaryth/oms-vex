@@ -18,12 +18,13 @@ void autonomous() {
   while (true) {
     // Arcade control
     std::int32_t straight_power = 0, turn_power = 0;
-    std::int32_t left_wheel_power = 0, right_wheel_power = 0;
     fscanf(record, " %d %d ", &straight_power, &turn_power);
-
     if (!isBlue) {
       turn_power = - turn_power;
     }
+
+    std::int32_t left_wheel_power = straight_power - turn_power;
+    std::int32_t right_wheel_power = straight_power + turn_power;
 
     left_front_wheel_motor.move_velocity(left_wheel_power);
     left_front_wheel_motor_rev.move_velocity(left_wheel_power);
@@ -51,9 +52,7 @@ void autonomous() {
     fscanf(record, " %d ", &arm_power);
     arm_motor.move_velocity(arm_power);
 
-    #ifdef DEBUGGING
     printf("%d %d %d %d %d\n", left_wheel_power, right_wheel_power, claw_power, throw_power, arm_power);
-    #endif
 
     // Delay
     pros::delay(delay_time);

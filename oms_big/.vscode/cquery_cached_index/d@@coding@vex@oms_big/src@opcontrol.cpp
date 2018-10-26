@@ -104,7 +104,7 @@ void opcontrol() {
 		if (isScroll) {
 			scroll_power = scroll_power_set;
 		} else {
-			scroll_motor = 0;
+			scroll_power = 0;
 		}
 		scroll_motor.move_velocity(scroll_power);
 

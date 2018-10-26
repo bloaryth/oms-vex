@@ -17,12 +17,13 @@ void autonomous() {
   while (true) {
     // Arcade control
     std::int32_t straight_power = 0, turn_power = 0;
-    std::int32_t left_wheel_power = 0, right_wheel_power = 0;
     fscanf(record, " %d %d ", &straight_power, &turn_power);
-
     if (!isBlue) {
       turn_power = - turn_power;
     }
+
+    std::int32_t left_wheel_power = straight_power + turn_power;
+    std::int32_t right_wheel_power = straight_power - turn_power;
 
     left_front_wheel_motor.move_velocity(left_wheel_power);
     left_middle_wheel_motor.move_velocity(left_wheel_power);

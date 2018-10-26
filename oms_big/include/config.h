@@ -46,7 +46,7 @@ const char* const record_path = "/usd/oms_big_auto.txt";
 /**
 * Whether the code is debugging.
 **/
-// #define DEBUGGING
+#define DEBUGGING
 
 /**
 * The autonomous part this is to operate.
