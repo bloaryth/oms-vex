@@ -7,6 +7,7 @@ void on_center_button() {
   } else {
     pros::lcd::set_text(2, "Red team now.\n");
   }
+	// autonomous();
 }
 
 /**
@@ -31,7 +32,9 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	pros::lcd::set_text(5, "I'm disabled.");
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field

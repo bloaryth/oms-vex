@@ -37,6 +37,7 @@ void opcontrol() {
 	bool isScroll = false;
 	int change_scroll_cooldown = 0;
   pros::Controller master (pros::E_CONTROLLER_MASTER);
+  pros::lcd::set_text(3, "opcontrol mode.\n");
   while (true) {
     // Start or end recording.
     if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_Y)) {
@@ -154,9 +155,7 @@ void opcontrol() {
 
     // Record
     if (isRecording) {
-      #ifdef DEBUGGING
       printf("%d %d %d %d %d %d\n", straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power);
-      #endif
       robot_motors_vector.emplace_back(std::make_tuple(straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power));
     }
 

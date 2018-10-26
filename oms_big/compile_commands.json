@@ -63,11 +63,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/config.cpp.o",
-            "src\\config.cpp"
+            "bin/opcontrol.cpp.o",
+            "src\\opcontrol.cpp"
         ],
         "directory": "D:\\Coding\\vex\\oms_big",
-        "file": "src\\config.cpp"
+        "file": "src\\opcontrol.cpp"
     },
     {
         "arguments": [
@@ -98,11 +98,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/opcontrol.cpp.o",
-            "src\\opcontrol.cpp"
+            "bin/config.cpp.o",
+            "src\\config.cpp"
         ],
         "directory": "D:\\Coding\\vex\\oms_big",
-        "file": "src\\opcontrol.cpp"
+        "file": "src\\config.cpp"
     },
     {
         "arguments": [

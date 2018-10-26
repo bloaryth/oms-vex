@@ -15,6 +15,7 @@
 void autonomous() {
   FILE* record = fopen (record_path, "r");
 
+  pros::lcd::set_text(3, "autonomous mode.\n");
   while (true) {
     // Arcade control
     std::int32_t straight_power = 0, turn_power = 0;

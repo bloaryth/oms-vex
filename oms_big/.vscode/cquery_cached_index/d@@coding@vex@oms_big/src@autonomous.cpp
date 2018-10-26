@@ -14,6 +14,7 @@
 void autonomous() {
   FILE* record = fopen (record_path, "r");
 
+  pros::lcd::set_text(3, "autonomous mode.\n");
   while (true) {
     // Arcade control
     std::int32_t straight_power = 0, turn_power = 0;
@@ -36,6 +37,7 @@ void autonomous() {
     // Scroll Control
     std::int32_t scroll_power = 0;
     fscanf(record, " %d ", &scroll_power);
+    scroll_power = 10;
     scroll_motor.move_velocity(scroll_power);
 
     // Eject Control
@@ -55,9 +57,8 @@ void autonomous() {
     fscanf(record, " %d ", &claw_power);
     claw_motor.move_velocity(claw_power);
 
-    #ifdef DEBUGGING
     printf("%d %d %d %d %d %d\n", straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power);
-    #endif
+    pros::lcd::print(4, "%d %d %d %d %d %d\n", straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power);
 
     // Delay
     pros::delay(delay_time);

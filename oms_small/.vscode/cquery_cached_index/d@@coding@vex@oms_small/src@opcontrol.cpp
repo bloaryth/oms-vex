@@ -36,6 +36,7 @@ void opcontrol() {
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
   bool is_forward = true;
   std::int32_t change_direction_cooldown = 0;
+  pros::lcd::set_text(3, "opcontrol mode.\n");
 	while (true) {
 		// Start or end recording.
 		if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_Y)) {
