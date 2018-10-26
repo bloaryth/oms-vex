@@ -37,7 +37,6 @@ void autonomous() {
     // Scroll Control
     std::int32_t scroll_power = 0;
     fscanf(record, " %d ", &scroll_power);
-    scroll_power = 10;
     scroll_motor.move_velocity(scroll_power);
 
     // Eject Control
