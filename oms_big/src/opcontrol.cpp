@@ -17,7 +17,7 @@
  * task, not resume it from where it left off.
  */
 
-inline int analog_to_g18_velocity(int analog) {
+inline std::int32_t analog_to_g18_velocity(std::int32_t analog) {
   return analog / 127.0 * 200;
 }
 
@@ -25,7 +25,7 @@ void opcontrol() {
   /**
 	* Prepare for the autonomous program.
 	**/
-	using robot_motors_tuple = std::tuple<int, int, int, int, int, int>;
+	using robot_motors_tuple = std::tuple<std::int32_t, std::int32_t, std::int32_t, std::int32_t, std::int32_t, std::int32_t>;
 	std::vector<robot_motors_tuple> robot_motors_vector;
   robot_motors_vector.reserve(1000 / delay_time * 60);  // 60 s
 	bool is_recording = false;
@@ -33,21 +33,25 @@ void opcontrol() {
   /**
   * Runing step of Robot.
   **/
+  int arm_target,claw_target;
   left_arm_motor.set_zero_position(0);
-  int arm_target = left_arm_motor.get_position();
+  claw_motor.set_zero_position(0);
+  claw_target=claw_motor.get_position();
+  arm_target=left_arm_motor.get_position();
+  bool is_slow = false;
+  int change_speed_cooldown = 0;
   int scroll_direction = 0;
 	int change_scroll_cooldown = 0;
-  int turn_over_cooldown = 0;
   pros::Controller master (pros::E_CONTROLLER_MASTER);
-  pros::lcd::set_text(4, "opcontrol mode.\n");
+  pros::lcd::set_text(3, "opcontrol mode.\n");
   while (true) {
     // Start or end recording.
     if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_Y)) {
       is_recording = ! is_recording;
       if (is_recording) {
-        pros::lcd::set_text(4, "Record start...\n");
+        pros::lcd::set_text(3, "Record start...\n");
       } else {
-        FILE* record = fopen (record_full_path.c_str(), "w");
+        FILE* record = fopen (record_path, "w");
         for (auto& robot_motors : robot_motors_vector) {
           fprintf(record, "%d\t%d\t%d\t%d\t%d\t%d\n", std::move(std::get<0>(robot_motors)), std::move(std::get<1>(robot_motors)),
                   std::move(std::get<2>(robot_motors)), std::move(std::get<3>(robot_motors)), std::move(std::get<4>(robot_motors)),
@@ -55,18 +59,38 @@ void opcontrol() {
         }
         fclose(record);
         robot_motors_vector.clear();
-        pros::lcd::set_text(4, "Record end...\n");
+        pros::lcd::set_text(3, "Record end...\n");
       }
       pros::delay(1000);
     }
 
+    // SLow move (cancel)
+    /*if (!change_speed_cooldown && master.get_digital(DIGITAL_R1)) {
+      is_slow = !is_slow;
+      change_speed_cooldown = 1000 / delay_time;
+    } else if (change_speed_cooldown > 0) {
+      --change_speed_cooldown;
+    }*/
+
     // Arcade Control
-		int	straight_power;
-    straight_power = master.get_analog(ANALOG_LEFT_Y);
+		std::int32_t	straight_power;
+		if (master.get_digital(DIGITAL_UP)) {
+			straight_power = move_power_set;
+		} else if (master.get_digital(DIGITAL_DOWN)){
+			straight_power = - move_power_set;
+		} else {
+			straight_power = master.get_analog(ANALOG_LEFT_Y);
+		}
 		straight_power = analog_to_g18_velocity(straight_power);
 
-    int turn_power;
-    turn_power = master.get_analog(ANALOG_RIGHT_X);
+    std::int32_t turn_power;
+		if (master.get_digital(DIGITAL_LEFT)) {
+			turn_power = - move_power_set;
+		} else if (master.get_digital(DIGITAL_RIGHT)) {
+			turn_power = move_power_set;
+		} else {
+			turn_power = master.get_analog(ANALOG_RIGHT_X);
+		}
 		turn_power = analog_to_g18_velocity(turn_power);
 
     if (is_recording) {
@@ -74,14 +98,16 @@ void opcontrol() {
       turn_power /= 4;
     }
 
-    int left_wheel_power = 1.25*straight_power + turn_power;
-    int right_wheel_power = 1.25*straight_power - turn_power;
 
-    if (master.get_digital(DIGITAL_R1)) {
+
+    std::int32_t left_wheel_power = 1.25*straight_power + turn_power;
+    std::int32_t right_wheel_power = 1.25*straight_power - turn_power;
+
+    //cancel the slow mode
+    /*if (master.get_digital(DIGITAL_R1)) {
       left_wheel_power /= 3;
       right_wheel_power /= 3;
-    }
-
+    }*/
     left_front_wheel_motor.move_velocity(left_wheel_power);
     left_middle_wheel_motor.move_velocity(left_wheel_power);
     left_back_wheel_motor.move_velocity(left_wheel_power);
@@ -90,8 +116,8 @@ void opcontrol() {
     right_back_wheel_motor.move_velocity(right_wheel_power);
 
     // Scroll Control
-		int scroll_power;
-    if (!change_scroll_cooldown) {
+		std::int32_t scroll_power;
+     if (!change_scroll_cooldown) {
       if (master.get_digital(DIGITAL_B)) {
         // (-1 -> 1) (0 ->1) (1 -> 0)
         scroll_direction = !((scroll_direction + 1) / 2);
@@ -99,7 +125,7 @@ void opcontrol() {
         // (-1 -> 0) (0 -> -1) (1 -> -1)
         scroll_direction = -!((scroll_direction - 1) / 2);
       }
-      change_scroll_cooldown = 100 / delay_time;
+      change_scroll_cooldown = 150 / delay_time;
     } else if (change_scroll_cooldown > 0) {
 			--change_scroll_cooldown;
 		}
@@ -107,7 +133,7 @@ void opcontrol() {
 		scroll_motor.move_velocity(scroll_power);
 
     // Eject Control
-		int eject_power;
+		std::int32_t eject_power;
     if (master.get_digital(DIGITAL_A)) {
       eject_power = eject_power_set;
     } else {
@@ -118,44 +144,39 @@ void opcontrol() {
 
     // Arm Control
 		arm_target = left_arm_motor.get_position();
-		int arm_power;
+		std::int32_t arm_power;
     if (master.get_digital(DIGITAL_L2)) {
 			arm_power = arm_power_set;
     } else if (master.get_digital(DIGITAL_L1)) {
 			arm_power = - arm_power_set;
-    } else if (left_arm_motor.get_position() >= -1550.0 && left_arm_motor.get_position() <= -800.0) {
-      arm_power = -2;
-		} else {
-      arm_power = 0;
-    }
+    } else {
+      if(left_arm_motor.get_position()>=-1550.0&&left_arm_motor.get_position()<=-650.0)arm_power=-2;
+    else arm_power = 0;
+		}
 		left_arm_motor.move_velocity(arm_power);
 		right_arm_motor.move_velocity(arm_power);
 
     // Claw Control
-		int claw_power = 0;
-    if (master.get_digital(DIGITAL_LEFT) && turn_over_cooldown == 0) {
-        turn_over_cooldown = turn_over_cooldown_set;
-    }
-    if (turn_over_cooldown > 0) {
-      // turn over the plate with button LEFT
-      if (turn_over_cooldown > 1450 / delay_time) {
-        claw_power = claw_power_set;
-      } else if (turn_over_cooldown > 700 / delay_time) {
-        claw_power = 0;
-      } else {
-        claw_power = - claw_power_set;
-      }
-      --turn_over_cooldown;
+		std::int32_t claw_power;
+    if (master.get_digital(DIGITAL_R1)) {
+      claw_power = claw_power_set;
+    } else if (master.get_digital(DIGITAL_R2)) {
+      claw_power = - claw_power_set;
     } else {
-      if (master.get_digital(DIGITAL_UP)) {
-        claw_power = claw_power_set;
-      } else if (master.get_digital(DIGITAL_DOWN)) {
-        claw_power = - claw_power_set;
-      } else {
-        claw_power = 0;
-      }
+      if(abs(claw_motor.get_position()-claw_target)<100)claw_motor=1;
+       else claw_power = 0;
     }
 		claw_motor.move_velocity(claw_power);
+    pros::lcd::print(5, "CLAW_MOTOR position: %d", claw_motor.get_position());
+    /* turn over the plate with button LEFT
+     if (master.get_digital(DIGITAL_LEFT)) {
+       claw_motor.move_velocity(90);
+       pros::delay(700);
+       claw_motor.move_velocity(0);
+       pros::delay(750);
+       claw_motor.move_velocity(-90);
+       pros::delay(700);
+     }*/
 
     // Record
     if (is_recording) {
@@ -163,6 +184,7 @@ void opcontrol() {
       robot_motors_vector.emplace_back(std::make_tuple(straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power));
     }
     pros::lcd::print(4, "ARM_MOTOR position: %d", left_arm_motor.get_position());
+
     pros::delay(delay_time);
   }
 }
