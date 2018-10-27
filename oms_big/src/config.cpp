@@ -1,6 +1,13 @@
 #include "config.h"
 
 /**
+* autonomous record path.
+**/
+std::string record_path = "/usd/oms6-";
+int record_id = 1;
+std::string record_full_path = record_path + std::to_string(record_id);
+
+/**
 * The autonomous part this is to operate.
 **/
 bool is_blue = true;
