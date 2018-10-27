@@ -13,19 +13,19 @@
  * from where it left off.
  */
 void autonomous() {
-  FILE* record = fopen (record_path, "r");
+  FILE* record = fopen (record_full_path.c_str(), "r");
 
-  pros::lcd::set_text(3, "autonomous mode.\n");
+  pros::lcd::set_text(4, "autonomous mode.\n");
   while (true) {
     // Arcade control
-    std::int32_t straight_power = 0, turn_power = 0;
+    int straight_power = 0, turn_power = 0;
     fscanf(record, " %d %d ", &straight_power, &turn_power);
-    if (!isBlue) {
+    if (!is_blue) {
       turn_power = - turn_power;
     }
 
-    std::int32_t left_wheel_power = straight_power - turn_power;
-    std::int32_t right_wheel_power = straight_power + turn_power;
+    int left_wheel_power = straight_power - turn_power;
+    int right_wheel_power = straight_power + turn_power;
 
     left_front_wheel_motor.move_velocity(left_wheel_power);
     left_front_wheel_motor_rev.move_velocity(left_wheel_power);
@@ -38,18 +38,18 @@ void autonomous() {
   	right_back_wheel_motor_rev.move_velocity(right_wheel_power);
 
     // Claw Control
-    std::int32_t claw_power = 0;
+    int claw_power = 0;
     fscanf(record, " %d ", &claw_power);
     claw_motor.move_velocity(claw_power);
 
     // Throw Control
-    std::int32_t throw_power = 0;
+    int throw_power = 0;
     fscanf(record, " %d ", &throw_power);
     left_throw_motor.move_velocity(throw_power);
     right_throw_motor.move_velocity(throw_power);
 
     // Arm Control
-    std::int32_t arm_power = 0;
+    int arm_power = 0;
     fscanf(record, " %d ", &arm_power);
     arm_motor.move_velocity(arm_power);
 

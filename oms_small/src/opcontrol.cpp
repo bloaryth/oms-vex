@@ -17,7 +17,7 @@
  * task, not resume it from where it left off.
  */
 
-inline std::int32_t analog_to_g18_velocity(std::int32_t analog) {
+inline int analog_to_g18_velocity(int analog) {
   return analog / 127.0 * 200;
 }
 
@@ -25,33 +25,35 @@ void opcontrol() {
 	/**
 	* Prepare for the autonomous program.
 	**/
-	using robot_motors_tuple = std::tuple<std::int32_t, std::int32_t, std::int32_t, std::int32_t, std::int32_t>;
+	using robot_motors_tuple = std::tuple<int, int, int, int, int>;
 	std::vector<robot_motors_tuple> robot_motors_vector;
   robot_motors_vector.reserve(1000 / delay_time * 60);  // 60 s
-	bool isRecording = false;
+	bool is_recording = false;
 
 	/**
 	* Runing step of Robot.
 	**/
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
   bool is_forward = true;
-  std::int32_t change_direction_cooldown = 0;
-  pros::lcd::set_text(3, "opcontrol mode.\n");
+  int change_direction_cooldown = 0;
+  int arm_up_cooldown = 0;
+  int arm_position = 0;
+  pros::lcd::set_text(4, "opcontrol mode.\n");
 	while (true) {
 		// Start or end recording.
 		if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_Y)) {
-			isRecording = ! isRecording;
-			if (isRecording) {
-				pros::lcd::set_text(3, "Record start...\n");
+			is_recording = ! is_recording;
+			if (is_recording) {
+				pros::lcd::set_text(4, "Record start...\n");
 			} else {
-        FILE* record = fopen (record_path, "w");
+        FILE* record = fopen (record_path.c_str(), "w");
 				for (auto& robot_motors : robot_motors_vector) {
           fprintf(record, "%d\t%d\t%d\t%d\t%d\n", std::move(std::get<0>(robot_motors)), std::move(std::get<1>(robot_motors)),
                   std::move(std::get<2>(robot_motors)), std::move(std::get<3>(robot_motors)), std::move(std::get<4>(robot_motors)));
 				}
         fclose(record);
         robot_motors_vector.clear();
-        pros::lcd::set_text(3, "Record end...\n");
+        pros::lcd::set_text(4, "Record end...\n");
 			}
 			pros::delay(1000);
 		}
@@ -65,7 +67,7 @@ void opcontrol() {
     }
 
 		// Arcade Control
-    std::int32_t straight_power;
+    int straight_power;
     if (master.get_digital(DIGITAL_UP)) {
       straight_power = move_power_set;
     } else if (master.get_digital(DIGITAL_DOWN)) {
@@ -78,7 +80,7 @@ void opcontrol() {
     }
     straight_power = analog_to_g18_velocity(straight_power);
 
-    std::int32_t turn_power;
+    int turn_power;
     if (master.get_digital(DIGITAL_LEFT)) {
       turn_power = move_power_set;
     } else if (master.get_digital(DIGITAL_RIGHT)) {
@@ -88,13 +90,13 @@ void opcontrol() {
     }
     turn_power = analog_to_g18_velocity(turn_power);
 
-    if (isRecording) {
+    if (is_recording) {
       straight_power /= 2;
       turn_power /= 4;
     }
 
-    std::int32_t left_wheel_power = straight_power - turn_power;
-    std::int32_t right_wheel_power = straight_power + turn_power;
+    int left_wheel_power = straight_power - turn_power;
+    int right_wheel_power = straight_power + turn_power;
 
 		left_front_wheel_motor.move_velocity(left_wheel_power);
 		left_front_wheel_motor_rev.move_velocity(left_wheel_power);
@@ -107,7 +109,7 @@ void opcontrol() {
 		right_back_wheel_motor_rev.move_velocity(right_wheel_power);
 
 		// Claw Control
-    std::int32_t claw_power;
+    int claw_power;
 		if (master.get_digital(DIGITAL_L1)) {
 			claw_power = claw_power_set;
 		} else if (master.get_digital(DIGITAL_L2)) {
@@ -118,7 +120,7 @@ void opcontrol() {
 		claw_motor.move_velocity(claw_power);
 
 		// Throw Control
-    std::int32_t throw_power;
+    int throw_power;
 		if (master.get_digital(DIGITAL_R1)) {
 			throw_power = throw_power_set;
 		} else if (master.get_digital(DIGITAL_R2)) {
@@ -130,18 +132,25 @@ void opcontrol() {
 		right_throw_motor.move_velocity(throw_power);
 
     // Arm Control
-    std::int32_t arm_power;
-    if (master.get_digital(DIGITAL_A)) {
+    int arm_power = 0;
+    if (arm_up_cooldown > 0) {
       arm_power = arm_power_set;
+      --arm_up_cooldown;
+      ++arm_position;
+    } else if (master.get_digital(DIGITAL_A)) {
+      if (arm_up_cooldown == 0 && arm_position != arm_up_cooldown_set) {
+        arm_up_cooldown = arm_up_cooldown_set;
+      }
     } else if (master.get_digital(DIGITAL_B)) {
       arm_power = - arm_power_set;
+      arm_position = 0;
     } else {
       arm_power = 0;
     }
     arm_motor.move_velocity(arm_power);
 
 		// Record
-		if (isRecording) {
+		if (is_recording) {
       #ifdef DEBUGGING
       printf("%d %d %d %d %d\n", straight_power, turn_power, claw_power, throw_power, arm_power);
       #endif

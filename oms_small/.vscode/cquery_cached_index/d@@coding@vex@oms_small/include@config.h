@@ -1,4 +1,5 @@
 #include "main.h"
+#include <string>
 
 #ifndef CONFIG
 #define CONFIG
@@ -8,39 +9,42 @@
 **/
 
 /**
+* The delay of each control step.
+**/
+const int delay_time = 50;
+
+/**
 * Port Configuration: Ports that all the motors, sensors or else use.
 * You can modify it to fit your Robot.
 **/
-const std::int32_t LEFT_FRONT_WHEEL_MOTOR = 1;
-const std::int32_t LEFT_FRONT_WHEEL_MOTOR_REV = 2;
-const std::int32_t RIGHT_FRONT_WHEEL_MOTOR = 3;
-const std::int32_t RIGHT_FRONT_WHEEL_MOTOR_REV = 4;
-const std::int32_t LEFT_BACK_WHEEL_MOTOR = 5;
-const std::int32_t LEFT_BACK_WHEEL_MOTOR_REV = 6;
-const std::int32_t RIGHT_BACK_WHEEL_MOTOR = 7;
-const std::int32_t RIGHT_BACK_WHEEL_MOTOR_REV = 8;
-const std::int32_t LEFT_THROW_MOTOR = 9;
-const std::int32_t RIGHT_THROW_MOTOR = 10;
-const std::int32_t CLAW_MOTOR = 15;
-const std::int32_t ARM_MOTOR = 20;
+const int LEFT_FRONT_WHEEL_MOTOR = 13;
+const int LEFT_FRONT_WHEEL_MOTOR_REV = 14;
+const int RIGHT_FRONT_WHEEL_MOTOR = 15;
+const int RIGHT_FRONT_WHEEL_MOTOR_REV = 16;
+const int LEFT_BACK_WHEEL_MOTOR = 17;
+const int LEFT_BACK_WHEEL_MOTOR_REV = 18;
+const int RIGHT_BACK_WHEEL_MOTOR = 19;
+const int RIGHT_BACK_WHEEL_MOTOR_REV = 20;
+const int LEFT_THROW_MOTOR = 10;
+const int RIGHT_THROW_MOTOR = 9;
+const int CLAW_MOTOR = 7;
+const int ARM_MOTOR = 8;
 
 /**
 * Motor power Configuration: Power that claws, throws or else uses.
 **/
-const std::int32_t move_power_set = 63;
-const std::int32_t claw_power_set = 100;
-const std::int32_t throw_power_set = 100;
-const std::int32_t arm_power_set = 200;
-
-/**
-* The delay of each control step.
-**/
-const std::int32_t delay_time = 50;
+const int move_power_set = 63;
+const int claw_power_set = 200;
+const int throw_power_set = 100;
+const int arm_power_set = 200;
+const int arm_up_cooldown_set = 300 / delay_time;
 
 /**
 * Record file Configuration: Path that the record file saves.
 **/
-const char* const record_path = "/usd/oms_small_auto.txt";
+extern std::string record_path;
+extern int record_id;
+extern std::string record_full_path;
 
 /**
 * Whether the code is debugging.
@@ -50,7 +54,7 @@ const char* const record_path = "/usd/oms_small_auto.txt";
 /**
 * The autonomous part this is to operate.
 **/
-extern bool isBlue;
+extern bool is_blue;
 
 /**
 * The motors to be used in the opcontrol and autonomous.

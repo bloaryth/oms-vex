@@ -92,9 +92,7 @@ void opcontrol() {
     if (is_recording) {
       straight_power /= 2;
       turn_power /= 4;
-    }
-
-    if (is_slow) {
+    } else if (is_slow) {
       straight_power /= 2;
       turn_power /= 2;
     }
