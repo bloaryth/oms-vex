@@ -1,7 +1,5 @@
 **/.vscode/*
 **/bin/*
-**/compile_commands.json
-**/common.mk
 
 # Prerequisites
 *.d
