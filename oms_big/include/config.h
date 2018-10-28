@@ -33,7 +33,7 @@ const int SCROLL_MOTOR = 13;
 /**
 * Motor power Configuration: Power that claws, throws or else uses.
 **/
-const int move_power_set = 80;
+const int move_power_set = 60;
 const int scroll_power_set = -150;
 const int eject_power_set = 75;
 const int arm_power_set = 100;

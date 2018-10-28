@@ -1,4 +1,5 @@
 #include "main.h"
+#include <string>
 
 #ifndef CONFIG
 #define CONFIG
@@ -8,40 +9,43 @@
 **/
 
 /**
+* The delay of each control step.
+**/
+const int delay_time = 50;
+
+/**
 * Port Configuration: Ports that all the motors, sensors or else use.
 * You can modify it to fit your Robot.
 **/
-const std::int32_t LEFT_FRONT_WHEEL_MOTOR = 1;
-const std::int32_t LEFT_MIDDLE_WHEEL_MOTOR = 2;
-const std::int32_t LEFT_BACK_WHEEL_MOTOR = 3;
-const std::int32_t RIGHT_FRONT_WHEEL_MOTOR = 4;
-const std::int32_t RIGHT_MIDDLE_WHEEL_MOTOR = 5;
-const std::int32_t RIGHT_BACK_WHEEL_MOTOR = 6;
-const std::int32_t LEFT_ARM_MOTOR = 7;
-const std::int32_t RIGHT_ARM_MOTOR = 8;
-const std::int32_t EJECT_LEFT_MOTOR = 10;
-const std::int32_t EJECT_RIGHT_MOTOR = 11;
-const std::int32_t CLAW_MOTOR = 12;
-const std::int32_t SCROLL_MOTOR = 13;
+const int LEFT_FRONT_WHEEL_MOTOR = 1;
+const int LEFT_MIDDLE_WHEEL_MOTOR = 2;
+const int LEFT_BACK_WHEEL_MOTOR = 3;
+const int RIGHT_FRONT_WHEEL_MOTOR = 4;
+const int RIGHT_MIDDLE_WHEEL_MOTOR = 5;
+const int RIGHT_BACK_WHEEL_MOTOR = 6;
+const int LEFT_ARM_MOTOR = 7;
+const int RIGHT_ARM_MOTOR = 8;
+const int EJECT_LEFT_MOTOR = 10;
+const int EJECT_RIGHT_MOTOR = 11;
+const int CLAW_MOTOR = 12;
+const int SCROLL_MOTOR = 13;
 
 /**
 * Motor power Configuration: Power that claws, throws or else uses.
 **/
-const std::int32_t move_power_set = 63;
-const std::int32_t scroll_power_set = -150;
-const std::int32_t eject_power_set = 75;
-const std::int32_t arm_power_set = 100;
-const std::int32_t claw_power_set = 100;
-
-/**
-* The delay of each control step.
-**/
-const std::int32_t delay_time = 50;
+const int move_power_set = 60;
+const int scroll_power_set = -150;
+const int eject_power_set = 75;
+const int arm_power_set = 100;
+const int claw_power_set = 90;
+const int turn_over_cooldown_set = 2150 / delay_time;
 
 /**
 * Record file Configuration: Path that the record file saves.
 **/
-const char* const record_path = "/usd/oms_big_auto.txt";
+extern std::string record_path;
+extern int record_id;
+extern std::string record_full_path;
 
 /**
 * Whether the code is debugging.

@@ -7,7 +7,20 @@ void on_center_button() {
   } else {
     pros::lcd::set_text(2, "Red team now.\n");
   }
-	// autonomous();
+}
+
+void on_left_button() {
+  if (record_id > 1) {
+    --record_id;
+    record_full_path = record_path + std::to_string(record_id);
+    pros::lcd::print(3, "record_id: %d\n", record_id);
+  }
+}
+
+void on_right_button() {
+  ++record_id;
+  record_full_path = record_path + std::to_string(record_id);
+  pros::lcd::print(3, "record_id: %d\n", record_id);
 }
 
 /**
@@ -24,7 +37,11 @@ void initialize() {
   } else {
     pros::lcd::set_text(2, "Red team now.\n");
   }
+
+  pros::lcd::print(3, "record_id: %d\n", record_id);
 	pros::lcd::register_btn1_cb(on_center_button);
+  pros::lcd::register_btn0_cb(on_left_button);
+  pros::lcd::register_btn2_cb(on_right_button);
 }
 
 /**
@@ -32,9 +49,7 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-	pros::lcd::set_text(5, "I'm disabled.");
-}
+void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field

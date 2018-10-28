@@ -46,7 +46,7 @@ void opcontrol() {
 			if (is_recording) {
 				pros::lcd::set_text(4, "Record start...\n");
 			} else {
-        FILE* record = fopen (record_path.c_str(), "w");
+        FILE* record = fopen (record_full_path.c_str(), "w");
 				for (auto& robot_motors : robot_motors_vector) {
           fprintf(record, "%d\t%d\t%d\t%d\t%d\n", std::move(std::get<0>(robot_motors)), std::move(std::get<1>(robot_motors)),
                   std::move(std::get<2>(robot_motors)), std::move(std::get<3>(robot_motors)), std::move(std::get<4>(robot_motors)));
