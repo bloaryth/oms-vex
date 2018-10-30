@@ -36,7 +36,7 @@ const int SCROLL_MOTOR = 13;
 const int move_power_set = 50;
 const int scroll_power_set = -150;
 const int eject_power_set = 75;
-const int arm_power_set = 100;
+const int arm_power_set = 60;
 const int claw_power_set = 90;
 const int turn_over_cooldown_set = 2150 / delay_time;
 

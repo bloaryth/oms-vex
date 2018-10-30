@@ -33,7 +33,10 @@ void opcontrol() {
   /**
   * Runing step of Robot.
   **/
-  int arm_target,claw_target,claw_fasten_flag=0;
+  left_arm_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  right_arm_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  claw_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  int arm_target,claw_target;
   left_arm_motor.set_zero_position(0);
   claw_motor.set_zero_position(0);
   arm_target = left_arm_motor.get_position();
@@ -139,7 +142,7 @@ void opcontrol() {
     } else if (master.get_digital(DIGITAL_L1)) {
 			arm_power = - arm_power_set;
     } else if (left_arm_motor.get_position() >= -1550.0 && left_arm_motor.get_position() <= -650.0) {
-      arm_power = -2;
+      arm_power = 0;
 		} else {
       arm_power = 0;
     }
@@ -148,7 +151,6 @@ void opcontrol() {
 
     // Claw Control
 		int claw_power = 0;
-    claw_fasten_flag++;if(claw_fasten_flag==100)claw_fasten_flag=0;
     /*if (master.get_digital(DIGITAL_LEFT) && turn_over_cooldown == 0) {
         turn_over_cooldown = turn_over_cooldown_set;
     }
@@ -168,9 +170,9 @@ void opcontrol() {
       } else if (master.get_digital(DIGITAL_R2)) {
         claw_power = - claw_power_set;
       } else {
-        if((abs(claw_motor.get_position()-claw_target)<100)&&claw_fasten_flag<9)claw_motor=1;
+      //  if((abs(claw_motor.get_position()-claw_target)<150.0))claw_motor=1;
         //一直加小电流的话，机械爪的电机会过热保护
-       else claw_power = 0;
+       claw_power = 0;
       }
       //}
 		claw_motor.move_velocity(claw_power);
@@ -180,7 +182,7 @@ void opcontrol() {
       printf("%d %d %d %d %d %d\n", straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power);
       robot_motors_vector.emplace_back(std::make_tuple(straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power));
     }
-    pros::lcd::print(4, "ARM_MOTOR position: %d", left_arm_motor.get_position());
+
 
     pros::delay(delay_time);
   }
