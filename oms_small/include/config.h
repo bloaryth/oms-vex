@@ -37,7 +37,7 @@ const int move_power_set = 63;
 const int claw_power_set = 200;
 const int throw_power_set = 100;
 const int arm_power_set = 200;
-const int arm_up_cooldown_set = 300 / delay_time;
+const int arm_up_cooldown_set = 350 / delay_time;
 
 /**
 * Record file Configuration: Path that the record file saves.
