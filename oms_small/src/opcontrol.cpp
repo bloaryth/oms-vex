@@ -34,7 +34,7 @@ void opcontrol() {
 	* Runing step of Robot.
 	**/
 	pros::Controller master (pros::E_CONTROLLER_MASTER);
-  bool is_forward = true;
+  bool is_forward = false;
   int change_direction_cooldown = 0;
   int arm_up_cooldown = 0;
   int arm_position = 0;
@@ -91,7 +91,7 @@ void opcontrol() {
     turn_power = analog_to_g18_velocity(turn_power);
 
     if (is_recording) {
-      straight_power /= 2;
+      // straight_power /= 2;
       turn_power /= 4;
     }
 
