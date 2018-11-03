@@ -88,8 +88,8 @@ void opcontrol() {
 		turn_power = analog_to_g18_velocity(turn_power);
 
     if (is_recording) {
-      straight_power /= 2;
-      turn_power /= 4;
+      //straight_power /=2;
+      turn_power /= 3;//speed up
     }
 
     int left_wheel_power = 1.2*straight_power + turn_power;
@@ -141,8 +141,6 @@ void opcontrol() {
 			arm_power = arm_power_set;
     } else if (master.get_digital(DIGITAL_L1)) {
 			arm_power = - arm_power_set;
-    } else if (left_arm_motor.get_position() >= -1550.0 && left_arm_motor.get_position() <= -650.0) {
-      arm_power = 0;
 		} else {
       arm_power = 0;
     }
