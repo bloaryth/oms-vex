@@ -69,9 +69,9 @@ void opcontrol() {
     // Arcade Control
 		int	straight_power;
     if (master.get_digital(DIGITAL_UP)) {
-			straight_power = move_power_set;
+			straight_power = 50;
 		} else if (master.get_digital(DIGITAL_DOWN)){
-			straight_power = - move_power_set;
+			straight_power = -50;
 		} else {
 			straight_power = master.get_analog(ANALOG_LEFT_Y);
 		}
@@ -164,9 +164,9 @@ void opcontrol() {
       --turn_over_cooldown;
     } else {*/
       if (master.get_digital(DIGITAL_R1)) {
-        claw_power = claw_power_set;
+        claw_power =100;
       } else if (master.get_digital(DIGITAL_R2)) {
-        claw_power = - claw_power_set;
+        claw_power = - 160;
       } else {
       //  if((abs(claw_motor.get_position()-claw_target)<150.0))claw_motor=1;
         //一直加小电流的话，机械爪的电机会过热保护
@@ -181,7 +181,7 @@ void opcontrol() {
       robot_motors_vector.emplace_back(std::make_tuple(straight_power, turn_power, scroll_power, eject_power, arm_power, claw_power));
     }
 
-
+    pros::lcd::print(5,"claw temp: %d",claw_motor.get_temperature());
     pros::delay(delay_time);
   }
 }
